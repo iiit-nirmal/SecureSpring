@@ -1,6 +1,7 @@
 package com.tulesko.SpringSecurity.controller;
 
 import com.tulesko.SpringSecurity.model.User;
+import com.tulesko.SpringSecurity.service.JWTService;
 import com.tulesko.SpringSecurity.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,6 +21,9 @@ public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JWTService jwtService;
+
     @PostMapping("register")
     public User register(@RequestBody User user){
         return service.saveUser(user);
@@ -30,7 +34,7 @@ public class UserController {
         Authentication authentication =
                 authenticationManager.authenticate( new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
         if(authentication.isAuthenticated())
-            return "success";
+            return jwtService.generateToekn(user.getUsername());
         return "login failed";
     }
 }
